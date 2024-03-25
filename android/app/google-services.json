@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "177096666747",
+    "project_id": "farmlynko-674c5",
+    "storage_bucket": "farmlynko-674c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177096666747:android:6a3cc48448ab82a653fcde",
+        "android_client_info": {
+          "package_name": "com.example.farmlynko"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBowAVd9dFA3G7UFZTipQfOrEFUGkvL0gc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,3 @@
+class FarmerData {
+  FarmerData._();
+}
