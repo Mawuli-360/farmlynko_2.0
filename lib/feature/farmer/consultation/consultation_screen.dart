@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farmlynko/feature/farmer/consultation/expertise_model.dart';
-import 'package:farmlynko/main.dart';
 import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:farmlynko/shared/resource/app_text_style.dart';
 import 'package:farmlynko/shared/resource/social_launch.dart';
@@ -74,6 +73,7 @@ class _ExpertiseScreenState extends ConsumerState<ExpertiseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: false,
@@ -98,24 +98,44 @@ class _ExpertiseScreenState extends ConsumerState<ExpertiseScreen> {
         padding: EdgeInsets.symmetric(horizontal: 2.h),
         child: Column(
           children: [
+            Gap(1.h),
+            RichText(
+              text: TextSpan(
+                  text: 'Discover success with',
+                  children: const [
+                    TextSpan(
+                        text: ' Farmlynco Consultancy',
+                        style:
+                            TextStyle(color: Color.fromARGB(255, 4, 135, 41))),
+                    TextSpan(
+                      text:
+                          '.Our experts deliver tailored solutions for agribusiness, ensuring your business thrives. Elevate your success with us.',
+                    ),
+                  ],
+                  style: TextStyle(color: AppColors.black, fontSize: 12.sp)),
+            ),
             Gap(4.h),
             Card(
-              elevation: 2,
+              elevation: 5,
+              color: AppColors.white,
+              shape: Border.all(color: Colors.white),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
                     width: 12.h,
                     height: 100,
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: Colors.red,
-                        image: DecorationImage(
+                    margin: EdgeInsets.all(0.5.h),
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: AppColors.green, width: 0.2.h),
+                        shape: BoxShape.circle,
+                        image: const DecorationImage(
                             fit: BoxFit.cover,
                             image: CachedNetworkImageProvider(
                                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0I8LCRtRxqNnGKJhIZyM27AO3SMUeeHSmSg&usqp=CAU"))),
                   ),
-                  Gap(3.h),
+                  Gap(1.h),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +143,7 @@ class _ExpertiseScreenState extends ConsumerState<ExpertiseScreen> {
                       children: [
                         Text(
                           'Mrs Franklina Owusu',
-                          style: AppTextStyle.latoStyle(size: 12),
+                          style: AppTextStyle.latoStyle(size: 10),
                         ),
                         Gap(1.h),
                         Text(
@@ -133,13 +153,12 @@ class _ExpertiseScreenState extends ConsumerState<ExpertiseScreen> {
                         Gap(1.h),
                         Text(
                           'Qualification: Lecturer',
-                          style: AppTextStyle.latoStyle(size: 12),
+                          style: AppTextStyle.latoStyle(size: 10),
                         ),
                       ],
                     ),
                   ),
                   Column(
-                    mainAxisSize: MainAxisSize.max,
                     children: [
                       IconButton(
                           onPressed: () {
@@ -164,50 +183,53 @@ class _ExpertiseScreenState extends ConsumerState<ExpertiseScreen> {
             ),
             Gap(1.h),
             Card(
-              elevation: 2,
+              elevation: 5,
+              color: AppColors.white,
+              shape: Border.all(color: Colors.white),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
                     width: 12.h,
                     height: 100,
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: Colors.red,
-                        image: DecorationImage(
+                    margin: EdgeInsets.all(0.5.h),
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: AppColors.green, width: 0.2.h),
+                        shape: BoxShape.circle,
+                        image: const DecorationImage(
                             fit: BoxFit.cover,
                             image: CachedNetworkImageProvider(
                                 "https://cdn.modernghana.com/content__/500/330/1012019120258-nsjum8x432-nelson.jpg"))),
                   ),
-                  Gap(3.h),
+                  Gap(1.h),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Text(
-                          'Dr Nofong',
-                          style: AppTextStyle.latoStyle(size: 12),
+                          'Mr Jokn Kwasi',
+                          style: AppTextStyle.latoStyle(size: 10),
                         ),
                         Gap(1.h),
                         Text(
-                          'Age: 48',
+                          'Age: 68',
                           style: AppTextStyle.latoStyle(size: 10),
                         ),
                         Gap(1.h),
                         Text(
                           'Qualification: Agric Engineer',
-                          style: AppTextStyle.latoStyle(size: 12),
+                          style: AppTextStyle.latoStyle(size: 10),
                         ),
                       ],
                     ),
                   ),
                   Column(
-                    mainAxisSize: MainAxisSize.max,
                     children: [
                       IconButton(
                           onPressed: () {
-                            SocialLaunch.launchWhatsApp("+233545786643");
+                            SocialLaunch.launchWhatsApp("+233543845970");
                           },
                           icon: const Icon(
                             Iconsax.message,
@@ -215,7 +237,7 @@ class _ExpertiseScreenState extends ConsumerState<ExpertiseScreen> {
                           )),
                       IconButton(
                           onPressed: () {
-                            SocialLaunch.launchPhoneCall("+233545786643");
+                            SocialLaunch.launchPhoneCall("+233543845970");
                           },
                           icon: const Icon(
                             Icons.call,

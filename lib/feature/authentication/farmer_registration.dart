@@ -2,40 +2,46 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmlynko/feature/authentication/provider/authentication_provider.dart';
+import 'package:farmlynko/feature/buyer/ui/logins_screen/login.dart';
 import 'package:farmlynko/routes/navigation.dart';
+import 'package:farmlynko/service/auth_service.dart';
+import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:gap/gap.dart';
+import 'package:sizer/sizer.dart';
 
-class FarmerRegistrationScreen extends ConsumerStatefulWidget {
-  const FarmerRegistrationScreen({super.key});
+class FarmerRegisterScreen extends ConsumerStatefulWidget {
+  const FarmerRegisterScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _FarmerRegistrationScreenState();
+  ConsumerState<FarmerRegisterScreen> createState() =>
+      _FarmerRegisterScreenState();
 }
 
-class _FarmerRegistrationScreenState
-    extends ConsumerState<FarmerRegistrationScreen> {
+class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  String imageUrl = "";
+  final TextEditingController phoneController = TextEditingController();
 
   void signUpFarmer() async {
-    final firstName = firstNameController.text;
-    final email = emailController.text;
-    final password = passwordController.text;
+    final firstName = fullNameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final phoneNumber = phoneController.text.trim();
     final firestore = ref.watch(firebaseFirestoreProvider);
     final auth = ref.watch(firebaseAuthProvider);
 
     if (firstName.isEmpty ||
         email.isEmpty ||
-        password.isEmpty ||
-        imageUrl.isEmpty) {
+        phoneNumber.isEmpty ||
+        password.isEmpty) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -67,10 +73,10 @@ class _FarmerRegistrationScreenState
 
       final userRecord = {
         'uid': user!.uid,
-        'firstName': firstName,
+        'fullName': firstName,
         'email': email,
+        'phoneNumber': phoneNumber,
         'role': "Farmer",
-        'imageUrl': imageUrl,
         'status': "pending",
       };
 
@@ -96,7 +102,7 @@ class _FarmerRegistrationScreenState
         }
       }
 
-      firstNameController.clear();
+      fullNameController.clear();
       emailController.clear();
       passwordController.clear();
     } catch (e) {
@@ -106,86 +112,194 @@ class _FarmerRegistrationScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.amber[200],
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Farmer Registration"),
-              TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                      hintText: "Email", border: OutlineInputBorder())),
-              TextFormField(
-                  controller: firstNameController,
-                  decoration: const InputDecoration(
-                      hintText: "first name", border: OutlineInputBorder())),
-              TextFormField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(
-                      hintText: "password", border: OutlineInputBorder())),
-              const SizedBox(
-                height: 10,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Are you sure?'),
+            content: const Text('Do you want to exit an App'),
+            actions: <Widget>[
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Text("NO"),
               ),
-              Container(
-                height: 200,
-                width: 300,
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.black)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: () => SystemNavigator.pop(),
+                child: const Text("YES"),
+              ),
+            ],
+          ),
+        );
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 2.4.h),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                        onPressed: () {}, child: const Text("upload image")),
-                    const SizedBox(
-                      width: 10,
+                    SizedBox(
+                      height: 5.h,
                     ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          ImagePicker imagePicker = ImagePicker();
-                          XFile? file = await imagePicker.pickImage(
-                              source: ImageSource.camera);
-
-                          if (file == null) return;
-                          String uniqueFileName =
-                              DateTime.now().millisecondsSinceEpoch.toString();
-
-                          Reference referenceRoot =
-                              FirebaseStorage.instance.ref();
-                          Reference referenceDirImages =
-                              referenceRoot.child('farmers_cards');
-
-                          Reference referenceImageToUpload =
-                              referenceDirImages.child(uniqueFileName);
-
-                          try {
-                            await referenceImageToUpload
-                                .putFile(File(file.path));
-                            imageUrl =
-                                await referenceImageToUpload.getDownloadURL();
-                          } catch (error) {
-                            //Some error occurred
-                          }
+                    Text(
+                      "Farmer Sign Up",
+                      style: TextStyle(
+                          fontSize: 30.sp, fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(
+                      height: 4.h,
+                    ),
+                    _buildTextField(
+                        title: 'Full name',
+                        hintText: '',
+                        onChanged: (value) {
+                          fullNameController.text = value;
                         },
-                        child: const Text("Take picture")),
+                        controller: fullNameController),
+                    _buildTextField(
+                        title: 'E-mail',
+                        hintText: 'eg. alexduncan@gmail.com',
+                        onChanged: (value) {
+                          emailController.text = value;
+                        },
+                        controller: emailController),
+                    _buildTextField(
+                        title: 'Phone Number',
+                        hintText: '054xxxxxxx',
+                        textInputType: const TextInputType.numberWithOptions(),
+                        onChanged: (value) {
+                          phoneController.text = value;
+                        },
+                        controller: phoneController),
+                    _buildTextField(
+                        title: 'password',
+                        hintText: '',
+                        onChanged: (value) {
+                          passwordController.text = value;
+                        },
+                        controller: passwordController),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 21.h,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                Navigation.openResetScreen(context: context);
+                              },
+                              child: const Text(
+                                "Forgot password?",
+                                style: TextStyle(color: Colors.green),
+                              )),
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              signUpFarmer();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  bottom: 1.h, left: 4.h, right: 4.h),
+                              height: 6.h,
+                              decoration: ShapeDecoration(
+                                  shadows: [
+                                    BoxShadow(
+                                        color: const Color.fromARGB(
+                                            57, 102, 101, 99),
+                                        spreadRadius: 0.1.h,
+                                        blurRadius: 3.h,
+                                        offset: const Offset(10, 10))
+                                  ],
+                                  color: Colors.green,
+                                  shape: const StadiumBorder()),
+                              child: Center(
+                                  child: Text(
+                                "SIGN UP",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12.sp),
+                              )),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Already have an account?"),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginScreen()),
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Login",
+                                    style: TextStyle(color: Colors.green),
+                                  ))
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(1.5.h),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    signUpFarmer();
-                  },
-                  child: const Text("register")),
-            ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      {required String title,
+      required String hintText,
+      required void Function(String) onChanged,
+      required TextEditingController controller,
+      TextInputType? textInputType}) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(bottom: 2.h),
+      height: 10.h,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+          ),
+          SizedBox(
+            height: 0.5.h,
+          ),
+          SizedBox(
+            height: 6.h,
+            child: TextField(
+              controller: controller,
+              onChanged: onChanged,
+              keyboardType: textInputType,
+              decoration: InputDecoration(
+                  hintText: hintText,
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey)),
+                  focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey))),
+            ),
+          ),
+        ],
       ),
     );
   }

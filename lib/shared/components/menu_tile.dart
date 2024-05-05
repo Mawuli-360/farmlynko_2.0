@@ -1,9 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-
 import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:farmlynko/shared/resource/app_text_style.dart';
+import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class MenuTile extends StatelessWidget {
   const MenuTile({
@@ -11,11 +9,13 @@ class MenuTile extends StatelessWidget {
     required this.icon,
     required this.menu,
     required this.onTap,
+    this.color = const Color.fromARGB(33, 245, 245, 245),
   }) : super(key: key);
 
   final IconData icon;
   final String menu;
   final void Function() onTap;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class MenuTile extends StatelessWidget {
       onTap: onTap,
       splashColor: Colors.white,
       child: Container(
-        color: const Color.fromARGB(61, 245, 245, 245),
+        color: color,
         margin: EdgeInsets.symmetric(vertical: 1.h),
         child: ListTile(
           leading: Icon(

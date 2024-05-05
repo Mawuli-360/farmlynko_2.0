@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:farmlynko/feature/farmer/farmer_main_screen.dart';
+import 'package:farmlynko/feature/buyer/ui/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +15,8 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+
   String initialRoute = await checkCurrentUser();
 
   await dotenv.load();
@@ -32,29 +34,29 @@ Future<String> checkCurrentUser() async {
 
   try {
     final User? currentUser = firebaseAuth.currentUser;
-
-    if (currentUser != null) {
+    if (currentUser != null && currentUser.uid.isNotEmpty) {
+      // Check if the user is authenticated
       String uid = currentUser.uid;
       DocumentSnapshot userSnapshot =
           await firestore.collection('users').doc(uid).get();
-
       if (userSnapshot.exists) {
         final userData = userSnapshot.data() as Map<String, dynamic>;
         String role = userData['role'];
-
         if (role == 'Farmer') {
           return Navigation.farmerScreen;
         } else if (role == 'Buyer') {
-          return Navigation.buyerScreen;
+          return Navigation.homeScreen;
         }
       }
     }
+    // If the user is not authenticated or their role is not found, return the login screen
     return Navigation.loginScreen;
   } catch (e) {
     // print('Error: $e');
     return Navigation.loginScreen;
   }
 }
+
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({
@@ -79,11 +81,10 @@ class _MyAppState extends ConsumerState<MyApp> {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: false,
         ),
-        home: const FarmerMainScreen(),
-
+        home: const SplashScreen(),
         // initialRoute: widget.initialRoute,
-        // navigatorKey: Navigation.navigatorKey,
-        // onGenerateRoute: Navigation.onGenerateRoute,
+        navigatorKey: Navigation.navigatorKey,
+        onGenerateRoute: Navigation.onGenerateRoute,
       );
     });
   }

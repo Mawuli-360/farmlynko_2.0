@@ -1,3 +1,0 @@
-class FarmerData {
-  FarmerData._();
-}

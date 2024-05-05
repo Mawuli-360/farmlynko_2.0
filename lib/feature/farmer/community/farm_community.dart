@@ -1,4 +1,3 @@
-import 'package:farmlynko/main.dart';
 import 'package:farmlynko/shared/resource/app_animation.dart';
 import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:farmlynko/shared/resource/app_text_style.dart';

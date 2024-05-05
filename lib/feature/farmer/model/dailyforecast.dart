@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 DailyForecast dailyForecastFromJson(String str) => DailyForecast.fromJson(json.decode(str));
 

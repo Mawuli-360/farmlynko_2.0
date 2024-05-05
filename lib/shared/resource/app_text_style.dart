@@ -9,7 +9,9 @@ class AppTextStyle {
       FontWeight fontWeight = FontWeight.w700,
       Color color = Colors.black}) {
     return TextStyle(
-        fontSize: size.sp, fontWeight: FontWeight.w700, color: color);
+        fontFamily: "Poppins",
+        fontSize: size.sp,
+        fontWeight: FontWeight.w700,
+        color: color);
   }
-
 }

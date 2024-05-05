@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:farmlynko/feature/farmer/chat_ai/component/message.dart';
 import 'package:farmlynko/feature/farmer/chat_ai/model/response_model.dart';
 import 'package:farmlynko/shared/resource/app_colors.dart';
+import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:farmlynko/shared/resource/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,7 @@ import 'package:gap/gap.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class AssistantScreen extends ConsumerStatefulWidget {
@@ -22,15 +24,40 @@ class AssistantScreen extends ConsumerStatefulWidget {
 }
 
 class _AssistantScreenState extends ConsumerState<AssistantScreen> {
+  AlertDialog? _alertDialog;
   late TextEditingController promptController;
   late ResponseModel responseModel;
+  final _formKey = GlobalKey<FormState>();
+  final _textFieldFocusNode = FocusNode();
   String responseText = "";
   final List<Messages> _messages = [];
   bool isTyping = false;
-  var isSpeaking = false;
-  var text = "";
-  StreamSubscription? _subscription;
-  SpeechToText speechToText = SpeechToText();
+  final bool _showSpeechDialog = false;
+
+  final SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
+  String _lastWords = '';
+
+  void _initSpeech() async {
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {});
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {});
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {});
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+    });
+  }
 
   Future<ResponseModel> getResponse(String prompt) async {
     final response =
@@ -58,23 +85,18 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       text: promptController.text,
       sender: Sender.user,
     );
+
     setState(() {
       _messages.insert(0, message);
       isTyping = true;
     });
-
-    // setState(() {
-    //   responseText = response.choices[0].message.content;
-    //   _messages.insert(0, Messages(text: responseText, sender: Sender.bot));
-    //   isTyping = false;
-    // });
 
     final response =
         await http.post(Uri.parse("https://api.openai.com/v1/chat/completions"),
             headers: {
               "Content-Type": "application/json",
               "Authorization":
-                  "Bearer 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"
+                  "Bearer sk-proj-f0UgqIdr4BOX5vKaPTpbT3BlbkFJCmGP7C7hoIT5vuNp7UFr"
             },
             body: jsonEncode({
               "model": "gpt-3.5-turbo",
@@ -83,7 +105,43 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
               ]
             }));
 
-    print(response.body);
+    setState(() {
+      responseText =
+          responseModelFromJson(response.body).choices[0].message.content;
+      _messages.insert(0, Messages(text: responseText, sender: Sender.bot));
+      isTyping = false;
+    });
+
+    promptController.clear();
+  }
+
+  void sendVoiceMessage() async {
+    if (_lastWords.isEmpty) {
+      return;
+    }
+    Messages message = Messages(
+      text: _lastWords,
+      sender: Sender.user,
+    );
+
+    setState(() {
+      _messages.insert(0, message);
+      isTyping = true;
+    });
+
+    final response =
+        await http.post(Uri.parse("https://api.openai.com/v1/chat/completions"),
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization":
+                  "Bearer sk-proj-f0UgqIdr4BOX5vKaPTpbT3BlbkFJCmGP7C7hoIT5vuNp7UFr"
+            },
+            body: jsonEncode({
+              "model": "gpt-3.5-turbo",
+              "messages": [
+                {"role": "user", "content": _lastWords}
+              ]
+            }));
 
     setState(() {
       responseText =
@@ -92,45 +150,29 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       isTyping = false;
     });
 
-    print(responseText);
-
-    promptController.clear();
-  }
-
-  void voiceMessage() async {
-    if (text.isEmpty) {
-      return;
-    }
-    Messages message = Messages(text: text, sender: Sender.user);
-    setState(() {
-      _messages.insert(0, message);
-      isTyping = true;
-    });
-
-    text = "";
+    _lastWords = "";
   }
 
   @override
   void initState() {
     super.initState();
     promptController = TextEditingController();
+    _initSpeech();
   }
 
   @override
   void dispose() {
     promptController.dispose();
 
-    _subscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.white,
         title: Text(
           "Assistant",
           style: AppTextStyle.latoStyle(size: 14, color: AppColors.black),
@@ -145,238 +187,219 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
               color: AppColors.black,
             )),
       ),
-      bottomNavigationBar: Container(
-        height: 9.h,
-        width: double.infinity,
+      body: Container(
         decoration: BoxDecoration(
-            color: const Color(0xDCFFFFFF).withOpacity(.4),
-            border: Border.all(color: Colors.white),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            )),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+            image: _messages.isEmpty
+                ? null
+                : const DecorationImage(
+                    image: AppImages.chatBackground, fit: BoxFit.cover)),
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            GestureDetector(
-                onTapDown: (details) async {
-                  if (!isSpeaking) {
-                    var available = await speechToText.initialize();
-                    if (available) {
-                      setState(() {
-                        isSpeaking = true;
-                        speechToText.listen(onResult: (result) {
-                          setState(() {
-                            text = result.recognizedWords;
-                          });
-                        });
-                      });
-                    }
-                  }
-                },
-                onTapUp: (details) async {
-                  setState(() {
-                    isSpeaking = false;
-                  });
-                  speechToText.stop();
-                  voiceMessage();
-                  text = "";
-                },
-                child: Container(
-                    height: 5.h,
-                    width: 5.h,
-                    decoration: const BoxDecoration(
-                        color: AppColors.primaryColor, shape: BoxShape.circle),
-                    child: const Icon(
-                      Icons.mic,
-                      color: AppColors.white,
-                    ))),
+            _speechToText.isListening
+                ? Expanded(
+                    child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          height: 25.h,
+                          width: 25.h,
+                          child: Lottie.asset("assets/animation/listen.json")),
+                      Gap(2.h),
+                      Text(
+                        _lastWords,
+                        style: _messages.isEmpty
+                            ? TextStyle(
+                                fontSize: 13.sp,
+                              )
+                            : TextStyle(
+                                fontSize: 13.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ))
+                : Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: _messages.isEmpty
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 1.h),
+                              child: SizedBox(
+                                height: 65.h,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/chatbot.png",
+                                      width: 30.h,
+                                    ),
+                                    Gap(3.h),
+                                    Text(
+                                      "How can we help you today?",
+                                      style: AppTextStyle.latoStyle(
+                                          size: 12,
+                                          fontWeight: FontWeight.w100),
+                                    ),
+                                    Gap(3.h),
+                                    Container(
+                                      height: 7.h,
+                                      width: 50.h,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: Colors.transparent,
+                                          border: Border.all(
+                                              color: AppColors.grey)),
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Powered by OpenAI",
+                                              style: AppTextStyle.latoStyle(
+                                                  size: 10,
+                                                  fontWeight: FontWeight.w100),
+                                            ),
+                                            Text("-Example: How to grow rice?",
+                                                style: AppTextStyle.latoStyle(
+                                                    size: 10,
+                                                    color: AppColors.darkGrey))
+                                          ]),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Column(
+                              children: [
+                                Expanded(
+                                  child: ListView.builder(
+                                      physics: const BouncingScrollPhysics(),
+                                      reverse: true,
+                                      itemCount: _messages.length,
+                                      itemBuilder: (context, index) {
+                                        return _messages[index];
+                                      }),
+                                ),
+                                if (isTyping)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Lottie.asset(
+                                          "assets/animation/loading.json",
+                                          height: 4.h,
+                                          width: 15.w),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                    ),
+                  ),
             Container(
-              height: 6.h,
-              width: 60.w,
+              height: 9.h,
+              width: double.infinity,
               decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.grey),
-                  color: AppColors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(10))),
-              child: Padding(
-                padding: EdgeInsets.only(left: 5.w, right: 5.w),
-                child: TextField(
-                  style: TextStyle(fontSize: 12.sp),
-                  controller: promptController,
-                  decoration: InputDecoration(
-                      focusedBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      border: InputBorder.none,
-                      hintStyle: AppTextStyle.latoStyle(
-                          size: 10, color: AppColors.black),
-                      hintText: "Send Message"),
-                ),
+                  color: const Color(0xDCFFFFFF).withOpacity(.4),
+                  border: Border.all(color: Colors.white),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25),
+                  )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                      onLongPress: () {
+                        _startListening();
+                      },
+                      onLongPressUp: () {
+                        _stopListening();
+                        sendVoiceMessage();
+                      },
+                      child: Container(
+                          height: 5.h,
+                          width: 5.h,
+                          decoration: const BoxDecoration(
+                              color: AppColors.primaryColor,
+                              shape: BoxShape.circle),
+                          child: const Icon(
+                            Icons.mic,
+                            color: AppColors.white,
+                          ))),
+                  Container(
+                    height: 6.h,
+                    width: 60.w,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.grey),
+                        color: AppColors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10))),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 5.w, right: 5.w),
+                      child: Form(
+                        key: _formKey,
+                        child: TextField(
+                          style: TextStyle(fontSize: 12.sp),
+                          controller: promptController,
+                          focusNode: _textFieldFocusNode,
+                          decoration: InputDecoration(
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              border: InputBorder.none,
+                              hintStyle: AppTextStyle.latoStyle(
+                                  size: 10, color: AppColors.black),
+                              hintText: "Send Message"),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                      onTap: () async {
+                        _textFieldFocusNode.unfocus();
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        sendMessage();
+                      },
+                      child: Container(
+                          height: 5.h,
+                          width: 5.h,
+                          decoration: const BoxDecoration(
+                              color: AppColors.primaryColor,
+                              shape: BoxShape.circle),
+                          child: const Icon(
+                            Icons.send,
+                            color: AppColors.white,
+                          ))),
+                ],
               ),
             ),
-            GestureDetector(
-                onTap: () async {
-                  sendMessage();
-                },
-                child: Container(
-                    height: 5.h,
-                    width: 5.h,
-                    decoration: const BoxDecoration(
-                        color: AppColors.primaryColor, shape: BoxShape.circle),
-                    child: const Icon(
-                      Icons.send,
-                      color: AppColors.white,
-                    ))),
           ],
         ),
       ),
-      body:
-          // SizedBox(
-          //     width: double.infinity,
-          //     child: Column(
-          //       children: [
-          //         Expanded(
-          //           child: Container(
-          //             color: Colors.white,
-          //             child: Center(
-          //               child: responseText == ""
-          //                   ? const CircularProgressIndicator()
-          //                   : Text(responseText),
-          //             ),
-          //           ),
-          //         ),
-          //         Container(
-          //           color: Colors.amber[200],
-          //           child: TextFormField(
-          //               controller: promptController,
-          //               decoration: InputDecoration(
-          //                   suffixIcon: IconButton(
-          //                       onPressed: () async {
-          //                         setState(() {
-          //                           responseText = "Loading...";
-          //                         });
+    );
+  }
+}
 
-          //                         print("prompt: ${promptController.text}");
+class SpeechDialog extends StatefulWidget {
+  const SpeechDialog({super.key});
 
-          //                         final response = await http.post(
-          //                             Uri.parse(
-          //                                 'https://api.openai.com/v1/completions'),
-          //                             headers: {
-          //                               'Content-Type': 'application/json',
-          //                               'Authorization':
-          //                                   'Bearer ${dotenv.env['OPENAI_API_KEY']}'
-          //                             },
-          //                             body: jsonEncode({
-          //                               "model": "text-davinci-003",
-          //                               "prompt": promptController.text,
-          //                               "temperature": 0.7,
-          //                               "max_tokens": 256,
-          //                               "top_p": 1
-          //                             }));
+  @override
+  State<SpeechDialog> createState() => _SpeechDialogState();
+}
 
-          //                         setState(() {
-          //                           responseModel =
-          //                               ResponseModel.fromJson(response.body);
-          //                           responseText = responseModel.choices[0].text;
-          //                         });
-
-          //                         print("responseText: $responseText");
-          //                       },
-          //                       icon: const Icon(Icons.send)),
-          //                   border: const OutlineInputBorder(),
-          //                   hintText: "enter a prompt")),
-          //         ),
-          //       ],
-          //     )),
-
-          SizedBox(
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 8.h, bottom: 0.h),
-                child: Container(
-                  width: 90.w,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: const Color.fromARGB(96, 255, 255, 255)),
-                      color: Colors.white.withOpacity(.2),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 1.h),
-                    child: _messages.isEmpty
-                        ? SizedBox(
-                            height: 65.h,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/chatbot.png",
-                                  width: 30.h,
-                                ),
-                                Gap(3.h),
-                                Text(
-                                  "How can we help you today?",
-                                  style: AppTextStyle.latoStyle(
-                                      size: 12, fontWeight: FontWeight.w100),
-                                ),
-                                Gap(3.h),
-                                Container(
-                                  height: 5.h,
-                                  width: 50.h,
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                      color: Colors.transparent,
-                                      border:
-                                          Border.all(color: AppColors.grey)),
-                                  child: Column(children: [
-                                    Text(
-                                      "Powered by OpenAI",
-                                      style: AppTextStyle.latoStyle(
-                                          size: 10,
-                                          fontWeight: FontWeight.w100),
-                                    ),
-                                    Text("-Example: How to grow rice?",
-                                        style: AppTextStyle.latoStyle(
-                                            size: 10,
-                                            color: AppColors.darkGrey))
-                                  ]),
-                                )
-                              ],
-                            ),
-                          )
-                        : Column(
-                            children: [
-                              SizedBox(
-                                height: 65.h,
-                                child: ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    reverse: true,
-                                    itemCount: _messages.length,
-                                    itemBuilder: (context, index) {
-                                      return _messages[index];
-                                    }),
-                              ),
-                              if (isTyping)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Lottie.asset(
-                                        "assets/animation/loading.json",
-                                        height: 4.h,
-                                        width: 15.w),
-                                  ],
-                                ),
-                            ],
-                          ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+class _SpeechDialogState extends State<SpeechDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
         ),
+        padding: const EdgeInsets.all(16.0),
+        child: const Text('Listening...'),
       ),
     );
   }
