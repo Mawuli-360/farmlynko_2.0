@@ -1,18 +1,17 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:farmlynko/feature/buyer/model/product_model.dart';
+import 'package:farmlynko/feature/farmer/model/farmer_product_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final selectedAddOnsProvider =
-    StateNotifierProvider<SelectedAddOnsNotifier, List<ProductModel>>((ref) {
+    StateNotifierProvider<SelectedAddOnsNotifier, List<FarmerProductModel>>((ref) {
   return SelectedAddOnsNotifier();
 });
 
-class SelectedAddOnsNotifier extends StateNotifier<List<ProductModel>> {
+class SelectedAddOnsNotifier extends StateNotifier<List<FarmerProductModel>> {
   SelectedAddOnsNotifier() : super([]);
 
-  void toggleAddOn(ProductModel addOn) {
+  void toggleAddOn(FarmerProductModel addOn) {
     state = state.contains(addOn)
         ? state.where((item) => item != addOn).toList()
         : [...state, addOn];
@@ -24,18 +23,18 @@ class SelectedAddOnsNotifier extends StateNotifier<List<ProductModel>> {
 }
 
 final randomAddOnsProvider =
-    StreamProvider.autoDispose<List<ProductModel>>((ref) {
+    StreamProvider.autoDispose<List<FarmerProductModel>>((ref) {
   final firestore = FirebaseFirestore.instance;
-  final collection = firestore.collection('products').snapshots();
+  final collection = firestore.collection('shop_products').snapshots();
 
   return collection.map((querySnapshot) {
     final randomIndices =
         List.generate(3, (index) => Random().nextInt(querySnapshot.size));
-    final randomAddOns = <ProductModel>[];
+    final randomAddOns = <FarmerProductModel>[];
 
     for (int index in randomIndices) {
-      final ProductModel addOn =
-          ProductModel.fromSnapshot(querySnapshot.docs[index]);
+      final FarmerProductModel addOn =
+          FarmerProductModel.fromSnapshot(querySnapshot.docs[index]);
       randomAddOns.add(addOn);
     }
 
@@ -46,7 +45,7 @@ final randomAddOnsProvider =
 class CartNotifier extends StateNotifier<List<CartItem>> {
   CartNotifier() : super([]);
 
-  void addToCart(ProductModel mainProduct, List<ProductModel> selectedAddOns) {
+  void addToCart(FarmerProductModel mainProduct, List<FarmerProductModel> selectedAddOns) {
     final cartItems = [mainProduct, ...selectedAddOns];
 
     for (var item in cartItems) {
@@ -59,13 +58,13 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
     }
   }
 
-  void removeFromCart(ProductModel product) {
+  void removeFromCart(FarmerProductModel product) {
     state = state.where((cartItem) => cartItem.product != product).toList();
   }
 
-  void updateCartItemQuantity(ProductModel product, int newQuantity) {
+  void updateCartItemQuantity(FarmerProductModel product, int newQuantity) {
     final index =
-        state.indexWhere((item) => item.product.productId == product.productId);
+        state.indexWhere((item) => item.product.id == product.id);
     if (index >= 0) {
       state[index].quantity = newQuantity;
       state = [...state]; // Notify listeners of the state change
@@ -84,7 +83,7 @@ final cartProvider = StateNotifierProvider<CartNotifier, List<CartItem>>((ref) {
 });
 
 class CartItem {
-  final ProductModel product;
+  final FarmerProductModel product;
   int quantity;
 
   CartItem(this.product, this.quantity);

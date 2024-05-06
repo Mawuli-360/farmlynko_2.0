@@ -32,7 +32,7 @@ class _OfferScreenState extends ConsumerState<OfferScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productList = ref.watch(selectedProductsProvider(selectedValue));
+    final productList = ref.watch(fetchAllProductProvider);
 
     return Scaffold(
       appBar: AppBar(

@@ -1,5 +1,5 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
-import 'package:farmlynko/feature/farmer/service/presentation/service_inner_screens/farmer_shop_screen.dart';
+import 'package:farmlynko/feature/farmer/farmer_shop/farmer_shop_screen.dart';
 import 'package:farmlynko/feature/farmer/service/presentation/service_inner_screens/cultivation_process_screen.dart';
 import 'package:farmlynko/feature/farmer/service/presentation/service_inner_screens/hire_worker_screen.dart';
 import 'package:farmlynko/feature/farmer/service/presentation/service_inner_screens/rent_detail_screen.dart';
@@ -44,7 +44,7 @@ class ServiceScreenData {
         image: AppImages.plantDisease,
         onTap: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (_) => const FarmShopScreen()));
+              MaterialPageRoute(builder: (_) => const FarmerShopScreen()));
         },
       ),
     ];

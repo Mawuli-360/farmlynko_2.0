@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farmlynko/feature/buyer/provider/cart_provider.dart';
 import 'package:farmlynko/feature/buyer/ui/home_screen.dart';
+import 'package:farmlynko/feature/farmer/farmer_shop/farmer_shop_screen.dart';
+import 'package:farmlynko/feature/farmer/home_screen/presentation/farmer_home_screen.dart';
 import 'package:farmlynko/routes/navigation.dart';
 import 'package:farmlynko/shared/widget/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +14,7 @@ import 'package:pay_with_paystack/pay_with_paystack.dart';
 import 'package:sizer/sizer.dart';
 import 'package:tasty_toast/tasty_toast.dart';
 
-import '../provider/order_detail.dart';
+import '../../buyer/provider/order_detail.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -31,7 +33,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
     // Calculate the subtotal
     double subtotal =
-        cart.fold(0, (sum, item) => sum + (int.parse(item.product.price) * item.quantity));
+        cart.fold(0, (sum, item) => sum + (item.product.price * item.quantity));
 
     // Calculate the tax & fees (assuming it's 5% of the subtotal)
     double taxAndFees = 5;
@@ -47,8 +49,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         backgroundColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const FarmerShopScreen()));
           },
           child: Container(
             margin: EdgeInsets.all(1.h),

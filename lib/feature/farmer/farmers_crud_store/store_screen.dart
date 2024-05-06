@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmlynko/feature/farmer/farmers_providers/fetch_product.dart';
-import 'package:farmlynko/feature/farmer/farmers_shop/add_screen.dart';
-import 'package:farmlynko/feature/farmer/farmers_shop/edit_screen.dart';
-import 'package:farmlynko/feature/farmer/farmers_shop/farm_edit_screen.dart';
+import 'package:farmlynko/feature/farmer/farmers_crud_store/add_screen.dart';
+import 'package:farmlynko/feature/farmer/farmers_crud_store/edit_screen.dart';
+import 'package:farmlynko/feature/farmer/farmers_crud_store/farm_edit_screen.dart';
 import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:farmlynko/shared/resource/app_text_style.dart';
@@ -116,12 +116,8 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
                           itemBuilder: (context, index) {
                             return Stack(
                               children: [
-                                SizedBox(
-                                  width: 44.w,
-                                  height: 25.h,
-                                ),
                                 Positioned(
-                                    bottom: 1.8.h,
+                                    bottom: 0.15.h,
                                     left: 1.h,
                                     right: 1.h,
                                     child: Container(
@@ -158,7 +154,7 @@ class _StoreScreenState extends ConsumerState<StoreScreen> {
                                 Positioned(
                                   left: 1.h,
                                   right: 1.h,
-                                  top: 1.h,
+                                  top: 0.5.h,
                                   child: Container(
                                     width: 38.w,
                                     height: 14.h,

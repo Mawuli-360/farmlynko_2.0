@@ -167,6 +167,3 @@ class AuthService {
   }
 }
 
-class FarmerScreen {
-  const FarmerScreen();
-}

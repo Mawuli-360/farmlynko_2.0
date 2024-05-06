@@ -56,6 +56,7 @@ class SplashScreenState extends State<SplashScreen>
     checkCurrentUser().then((initialRoute) {
       Future.delayed(const Duration(seconds: 3), () {
         Navigator.pushReplacementNamed(context, initialRoute);
+        // PageTransition(initialRoute, (context, routeName) => Navigator.pushReplacementNamed(context, routeName));
       });
     });
   }

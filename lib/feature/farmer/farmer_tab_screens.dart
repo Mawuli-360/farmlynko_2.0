@@ -1,5 +1,5 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:farmlynko/feature/farmer/farmers_shop/store_screen.dart';
+import 'package:farmlynko/feature/farmer/farmers_crud_store/store_screen.dart';
 import 'package:farmlynko/feature/farmer/home_screen/presentation/farmer_home_screen.dart';
 import 'package:farmlynko/feature/farmer/service/service_landing_screen.dart';
 import 'package:farmlynko/feature/farmer/weather/weather_screen.dart';

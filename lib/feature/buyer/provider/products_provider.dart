@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmlynko/feature/buyer/model/product_model.dart';
 import 'package:farmlynko/feature/buyer/provider/firebase_firestore.dart';
+import 'package:farmlynko/feature/farmer/model/farmer_product_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final fetchSomeProductProvider = StreamProvider<List<ProductModel>>((ref) {
@@ -18,7 +19,6 @@ final fetchSomeProductProvider = StreamProvider<List<ProductModel>>((ref) {
   });
 });
 
-
 final fetchAllProductProvider = StreamProvider<List<ProductModel>>((ref) {
   final firestore = ref.watch(firestoreProvider);
   final collection = firestore.collection("products").snapshots();
@@ -34,22 +34,21 @@ final fetchAllProductProvider = StreamProvider<List<ProductModel>>((ref) {
   });
 });
 
-
 final selectedProductsProvider =
-    StreamProvider.family<List<ProductModel>, String>((ref, filter) {
+    StreamProvider.family<List<FarmerProductModel>, String>((ref, filter) {
   final firestore = ref.watch(firestoreProvider);
 
   // Check if the filter is "all" or a specific category
   final collection = (filter.toLowerCase() == 'all')
-      ? firestore.collection("products").snapshots()
+      ? firestore.collection("shop_products").snapshots()
       : firestore
-          .collection("products")
+          .collection("shop_products")
           .where("category", isEqualTo: filter)
           .snapshots();
 
   return collection.map((querySnapshot) {
     final products = querySnapshot.docs
-        .map((doc) => ProductModel.fromSnapshot(doc))
+        .map((doc) => FarmerProductModel.fromSnapshot(doc))
         .toList();
 
     if (filter.toLowerCase() != 'all') {
@@ -60,7 +59,6 @@ final selectedProductsProvider =
   });
 });
 
-
 final productSearchProvider = StreamProvider<List<ProductModel>>((ref) {
   final firestore = ref.watch(firestoreProvider);
   final collectionRef = firestore.collection('products');
@@ -68,7 +66,6 @@ final productSearchProvider = StreamProvider<List<ProductModel>>((ref) {
   return collectionRef.snapshots().map((snapshot) =>
       snapshot.docs.map((doc) => ProductModel.fromSnapshot(doc)).toList());
 });
-
 
 final filteredProductsProvider =
     Provider.family<List<ProductModel>, String>((ref, query) {
@@ -85,7 +82,6 @@ final filteredProductsProvider =
 
   return filteredProducts ?? [];
 });
-
 
 final productCountProvider = StreamProvider<int>((ref) {
   return FirebaseFirestore.instance.collection('products').snapshots().map(
