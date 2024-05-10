@@ -28,6 +28,8 @@ To test Farmlynco on your Android device, download the APK file attached to this
 
 [Download APK](https://drive.google.com/file/d/1ffwuz-NJZGnWXrtoCrZkumANj1kACyHj/view?usp=sharing)
 
+### NB: [Server link](https://github.com/Mawuli-360/newton_hackthon.git) leads to the server github
+
 To run this Flutter app on your local machine, follow these steps:
 
 ### Prerequisites
