@@ -59,23 +59,23 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
     });
   }
 
-  Future<ResponseModel> getResponse(String prompt) async {
-    final response =
-        await http.post(Uri.parse("https://api.openai.com/v1/chat/completions"),
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization":
-                  "Bearer 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"
-            },
-            body: jsonEncode({
-              "model": "gpt-3.5-turbo",
-              "messages": [
-                {"role": "user", "content": prompt}
-              ]
-            }));
+  // Future<ResponseModel> getResponse(String prompt) async {
+  //   final response =
+  //       await http.post(Uri.parse("https://api.openai.com/v1/chat/completions"),
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             "Authorization":
+  //                 "Bearer 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"
+  //           },
+  //           body: jsonEncode({
+  //             "model": "gpt-3.5-turbo",
+  //             "messages": [
+  //               {"role": "user", "content": prompt}
+  //             ]
+  //           }));
 
-    return responseModel = responseModelFromJson(response.body);
-  }
+  //   return responseModel = responseModelFromJson(response.body);
+  // }
 
   void sendMessage() async {
     if (promptController.text.isEmpty) {
@@ -91,23 +91,17 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       isTyping = true;
     });
 
-    final response =
-        await http.post(Uri.parse("https://api.openai.com/v1/chat/completions"),
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization":
-                  "Bearer sk-proj-f0UgqIdr4BOX5vKaPTpbT3BlbkFJCmGP7C7hoIT5vuNp7UFr"
-            },
-            body: jsonEncode({
-              "model": "gpt-3.5-turbo",
-              "messages": [
-                {"role": "user", "content": promptController.text}
-              ]
-            }));
+    final response = await http.post(
+        Uri.parse("https://newton-hackthon.onrender.com/chat"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({"user_email": "string", "user_message": promptController.text}));
+
 
     setState(() {
       responseText =
-          responseModelFromJson(response.body).choices[0].message.content;
+          responseModelFromJson(response.body).message;
       _messages.insert(0, Messages(text: responseText, sender: Sender.bot));
       isTyping = false;
     });
@@ -129,23 +123,16 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
       isTyping = true;
     });
 
-    final response =
-        await http.post(Uri.parse("https://api.openai.com/v1/chat/completions"),
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization":
-                  "Bearer sk-proj-f0UgqIdr4BOX5vKaPTpbT3BlbkFJCmGP7C7hoIT5vuNp7UFr"
-            },
-            body: jsonEncode({
-              "model": "gpt-3.5-turbo",
-              "messages": [
-                {"role": "user", "content": _lastWords}
-              ]
-            }));
+  final response = await http.post(
+        Uri.parse("https://newton-hackthon.onrender.com/chat"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({"user_email": "string", "user_message": _lastWords}));
 
     setState(() {
       responseText =
-          responseModelFromJson(response.body).choices[0].message.content;
+          responseModelFromJson(response.body).message;
       _messages.insert(0, Messages(text: responseText, sender: Sender.bot));
       isTyping = false;
     });

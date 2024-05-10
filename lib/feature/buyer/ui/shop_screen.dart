@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farmlynko/feature/buyer/model/product_model.dart';
-import 'package:farmlynko/feature/buyer/provider/cart_provider.dart';
 import 'package:farmlynko/feature/buyer/provider/products_provider.dart';
 import 'package:farmlynko/feature/buyer/ui/product_screen.dart';
 import 'package:farmlynko/routes/navigation.dart';
@@ -10,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:sizer/sizer.dart';
-import 'package:badges/badges.dart' as badges;
 
 class ShopScreen extends ConsumerStatefulWidget {
   const ShopScreen({super.key});

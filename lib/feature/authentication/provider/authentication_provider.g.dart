@@ -35,7 +35,7 @@ final firebaseFirestoreProvider = Provider<FirebaseFirestore>.internal(
 );
 
 typedef FirebaseFirestoreRef = ProviderRef<FirebaseFirestore>;
-String _$authServiceHash() => r'3b3e25cc4cb8819858bf56ac5bcaa0ceb886f690';
+String _$authServiceHash() => r'72bceb8625808a03a91f97dfad18fbeb02463fa5';
 
 /// See also [AuthService].
 @ProviderFor(AuthService)

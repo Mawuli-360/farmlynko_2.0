@@ -16,7 +16,6 @@ import 'package:sizer/sizer.dart';
 import 'package:farmlynko/feature/farmer/chat_ai/ai_assisstant_screen.dart';
 import 'package:farmlynko/shared/components/menu_tile.dart';
 import 'package:farmlynko/shared/resource/app_colors.dart';
-import 'package:farmlynko/shared/resource/app_text_style.dart';
 
 class FarmerMenuScreen extends ConsumerWidget {
   const FarmerMenuScreen({
@@ -54,12 +53,14 @@ class FarmerMenuScreen extends ConsumerWidget {
                     child: Container(
                       height: 16.h,
                       width: 16.h,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
                           image: DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"))),
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(user?.imageUrl ??
+                                "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"),
+                          )),
                     ),
                   ),
                 ],
@@ -68,17 +69,13 @@ class FarmerMenuScreen extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  user.when(
-                    data: (data) {
-                      return Text(
-                        data.name,
-                        style: AppTextStyle.latoStyle(
-                            size: 12, color: AppColors.white),
-                      );
-                    },
-                    error: (e, s) => Text(e.toString()),
-                    loading: () => const CircularProgressIndicator(),
-                  )
+                  user != null
+                      ? Text(
+                          user.name,
+                          style:
+                              TextStyle(fontSize: 15.sp, color: Colors.white),
+                        )
+                      : const Text("User"),
                 ],
               ),
               Gap(2.h),

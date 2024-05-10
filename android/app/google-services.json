@@ -12,7 +12,12 @@
           "package_name": "com.example.farmlynko"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "177096666747-ev7cn6a40ie7pfd3ofb0nrkkb05tp3a1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBowAVd9dFA3G7UFZTipQfOrEFUGkvL0gc"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "177096666747-ev7cn6a40ie7pfd3ofb0nrkkb05tp3a1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "177096666747-fop81rmlg4gtd3dlpqmjiktoar1phq4k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.farmlynko"
+              }
+            }
+          ]
         }
       }
     }

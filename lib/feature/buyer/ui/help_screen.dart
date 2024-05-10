@@ -1,4 +1,3 @@
-
 import 'package:farmlynko/routes/navigation.dart';
 import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:farmlynko/shared/widget/custom_button.dart';
@@ -67,12 +66,12 @@ class HelpScreen extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Container(
-                                  height: 10.h,
-                                  width: 10.h,
+                                  height: 20.h,
+                                  width: 20.h,
                                   decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                       image: DecorationImage(
-                                          image: AppImages.avatar)),
+                                          image: AppImages.logo)),
                                 ),
                               )))
                     ],
@@ -82,11 +81,11 @@ class HelpScreen extends StatelessWidget {
                   height: 1.h,
                 ),
                 Text(
-                  "Farmily",
+                  "Farmlynco",
                   style:
                       TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
                 ),
-                const Text("www.farmily.com"),
+                const Text("www.farmlynco.com"),
                 SizedBox(
                   height: 5.h,
                 ),
@@ -98,7 +97,7 @@ class HelpScreen extends StatelessWidget {
                   height: 5.h,
                 ),
                 const TextField(
-                  maxLines: 9,
+                  maxLines: 4,
                   decoration: InputDecoration(
                       hintText: "Your message",
                       enabledBorder: OutlineInputBorder(

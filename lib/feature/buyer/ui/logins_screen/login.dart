@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farmlynko/feature/authentication/email_verification_screen.dart';
 import 'package:farmlynko/feature/authentication/registration_screen.dart';
 import 'package:farmlynko/feature/buyer/ui/home_screen.dart';
-import 'package:farmlynko/feature/buyer/ui/logins_screen/sign_up_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_main_screen.dart';
 import 'package:farmlynko/routes/navigation.dart';
 import 'package:farmlynko/service/auth_service.dart';
 import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sizer/sizer.dart';
 import 'package:tasty_toast/tasty_toast.dart';
 
@@ -25,8 +24,58 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final bool _isLoading = false;
   String selectedRole = "Farmer";
+  bool isPassword = true;
+
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          );
+        },
+      );
+      // Trigger the Google Sign-In flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Check if the user is a Buyer
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final User? user = userCredential.user;
+      if (user != null) {
+        DocumentSnapshot userSnapshot =
+            await firestore.collection('users').doc(user.uid).get();
+        if (userSnapshot.exists) {
+          final userData = userSnapshot.data() as Map<String, dynamic>;
+          String role = userData['role'];
+          if (role == 'Buyer') {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()));
+          }
+        }
+      }
+    } catch (e) {
+      showToast(context, e.toString());
+    }
+  }
 
   void _handleAuthentication(String selectedRole) async {
     bool isAuthSuccessful =
@@ -38,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
       final User? currentUser = firebaseAuth.currentUser;
 
-      if (currentUser != null) {
+      if (currentUser != null && currentUser.emailVerified) {
         // User is authenticated and the selected role matches
         String uid = currentUser.uid;
         DocumentSnapshot userSnapshot =
@@ -64,9 +113,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           // User document not found in Firestore
           showToast(context, 'User document not found');
         }
+      }
+      if (currentUser != null && !currentUser.emailVerified) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EmailVerificationScreen(user: currentUser)),
+        );
       } else {
         // User is not authenticated or the selected role doesn't match
-        showToast(context, 'Authentication failed');
+        // showToast(context, 'Authentication failed');
       }
     } else {
       // Authentication failed
@@ -116,7 +172,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 6.h,
+                      height: 4.h,
                     ),
                     Text(
                       "Login",
@@ -135,12 +191,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     _buildTextField(
                         title: 'password',
                         hintText: '',
+                        isPassword: isPassword,
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isPassword = !isPassword;
+                              });
+                            },
+                            icon: isPassword
+                                ? Icon(
+                                    Icons.visibility_off,
+                                    color: AppColors.primaryColor,
+                                    size: 3.h,
+                                  )
+                                : Icon(
+                                    Icons.visibility,
+                                    color: AppColors.primaryColor,
+                                    size: 3.h,
+                                  )),
                         onChanged: (value) {
                           ref.read(passwordProvider.notifier).state = value;
                         }),
                     SizedBox(
                       width: double.infinity,
-                      height: 28.h,
+                      height: 30.h,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -218,11 +292,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   },
                                 );
                               }
-                              // setState(() {
-                              //   _isLoading = true;
-                              // });
-                              // AuthService.authenticateUser(
-                              //     selectedRole, ref, context);
                               _handleAuthentication(selectedRole);
                             },
                             child: ref.watch(isLoading)
@@ -293,6 +362,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ],
                       ),
                     ),
+                    Gap(0.5.h),
                     SizedBox(
                       height: 3.h,
                       child: Row(
@@ -312,16 +382,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ],
                       ),
                     ),
-                    Gap(3.h),
+                    Gap(2.h),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () => signInWithGoogle(context),
                           child: Container(
+                            height: 6.h,
                             padding: EdgeInsets.symmetric(horizontal: 2.h),
-                            height: 60,
-                            width: 20.h,
+                            width: 70.w,
                             decoration: ShapeDecoration(
                                 shadows: [
                                   BoxShadow(
@@ -335,42 +405,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 shape: const StadiumBorder()),
                             child: Row(
                               children: [
-                                AppImages.facebook,
-                                SizedBox(
-                                  width: 1.h,
-                                ),
-                                const Text(
-                                  "FACEBOOK",
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            height: 60,
-                            padding: EdgeInsets.symmetric(horizontal: 2.h),
-                            width: 20.h,
-                            decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                      color: const Color.fromARGB(
-                                          57, 102, 101, 99),
-                                      spreadRadius: 0.1.h,
-                                      blurRadius: 3.h,
-                                      offset: const Offset(10, 10))
-                                ],
-                                color: Colors.white,
-                                shape: const StadiumBorder()),
-                            child: Row(
-                              children: [
+                                Gap(2.h),
                                 AppImages.google,
                                 SizedBox(
                                   width: 1.h,
                                 ),
-                                const Text(
+                                Gap(2.h),
+                                Text(
                                   "GOOGLE",
+                                  style: TextStyle(fontSize: 13.sp),
                                 ),
                               ],
                             ),
@@ -391,7 +434,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildTextField(
       {required String title,
       required String hintText,
-      required void Function(String) onChanged}) {
+      required void Function(String) onChanged,
+      bool isPassword = false,
+      Widget? suffixIcon}) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 2.h),
@@ -408,8 +453,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
           TextField(
             onChanged: onChanged,
+            obscuringCharacter: "*",
+            obscureText: isPassword,
             decoration: InputDecoration(
                 hintText: hintText,
+                suffixIcon: suffixIcon,
                 enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey)),
                 focusedBorder: const OutlineInputBorder(

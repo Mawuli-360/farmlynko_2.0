@@ -1,7 +1,6 @@
 import 'package:farmlynko/feature/buyer/ui/logins_screen/login.dart';
 import 'package:farmlynko/routes/navigation.dart';
 import 'package:farmlynko/service/auth_service.dart';
-import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

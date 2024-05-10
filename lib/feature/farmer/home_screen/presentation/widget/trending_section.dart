@@ -33,8 +33,8 @@ class TrendingSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             children: [
               Container(
-                width: 40.h,
-                height: 100,
+                width: 80.w,
+                height: 10.h,
                 margin: EdgeInsets.only(right: 2.h, left: 2.h),
                 padding: EdgeInsets.all(2.h),
                 decoration: BoxDecoration(
@@ -72,8 +72,8 @@ class TrendingSection extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 377,
-                height: 40.h,
+                width: 90.w,
+                height: 10.h,
                 margin: EdgeInsets.only(right: 4.h),
                 padding: EdgeInsets.all(2.h),
                 decoration: BoxDecoration(

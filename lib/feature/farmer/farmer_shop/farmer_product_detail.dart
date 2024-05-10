@@ -115,6 +115,7 @@ class _FarmerProductDetailState extends ConsumerState<FarmerProductDetail> {
                           fontWeight: FontWeight.w500,
                           color: Colors.grey),
                     ),
+                   
                     SizedBox(
                       height: 4.h,
                     ),

@@ -67,9 +67,35 @@ final productSearchProvider = StreamProvider<List<ProductModel>>((ref) {
       snapshot.docs.map((doc) => ProductModel.fromSnapshot(doc)).toList());
 });
 
+final farmerProductSearchProvider =
+    StreamProvider<List<FarmerProductModel>>((ref) {
+  final firestore = ref.watch(firestoreProvider);
+  final collectionRef = firestore.collection('shop_products');
+
+  return collectionRef.snapshots().map((snapshot) => snapshot.docs
+      .map((doc) => FarmerProductModel.fromSnapshot(doc))
+      .toList());
+});
+
 final filteredProductsProvider =
     Provider.family<List<ProductModel>, String>((ref, query) {
   final products = ref.watch(productSearchProvider);
+
+  if (query.isEmpty) {
+    return products.value ?? [];
+  }
+
+  final filteredProducts = products.value
+      ?.where(
+          (product) => product.name.toLowerCase().contains(query.toLowerCase()))
+      .toList();
+
+  return filteredProducts ?? [];
+});
+
+final filteredFarmerProductsProvider =
+    Provider.family<List<FarmerProductModel>, String>((ref, query) {
+  final products = ref.watch(farmerProductSearchProvider);
 
   if (query.isEmpty) {
     return products.value ?? [];

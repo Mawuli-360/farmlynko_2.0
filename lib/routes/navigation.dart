@@ -1,4 +1,5 @@
 import 'package:farmlynko/feature/authentication/buyer_registration.dart';
+import 'package:farmlynko/feature/authentication/email_verification_screen.dart';
 import 'package:farmlynko/feature/authentication/registration_screen.dart';
 import 'package:farmlynko/feature/authentication/waiting_screen.dart';
 import 'package:farmlynko/feature/buyer/ui/bookmark_screen.dart';
@@ -17,6 +18,7 @@ import 'package:farmlynko/feature/buyer/ui/news_feed.dart';
 import 'package:farmlynko/feature/buyer/ui/notication_screen.dart';
 import 'package:farmlynko/feature/buyer/ui/offers_screen.dart';
 import 'package:farmlynko/feature/buyer/ui/onboarding_screens.dart/onboarding_screen.dart';
+import 'package:farmlynko/feature/farmer/farmer_shop/farmer_search_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_shop/order_screen.dart';
 import 'package:farmlynko/feature/buyer/ui/payment_method.dart';
 import 'package:farmlynko/feature/buyer/ui/privacy_screen.dart';
@@ -28,7 +30,6 @@ import 'package:farmlynko/feature/buyer/ui/shop_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_shop/successful_payment.dart';
 import 'package:farmlynko/feature/buyer/ui/thanks_screen.dart';
 import 'package:farmlynko/feature/buyer/ui/thanku_report.dart';
-import 'package:farmlynko/feature/buyer/ui/welcome_screen.dart';
 import 'package:farmlynko/feature/farmer/chat_ai/ai_assisstant_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_main_screen.dart';
 import 'package:farmlynko/shared/components/page_route.dart';
@@ -50,6 +51,8 @@ class Navigation {
   static const String waitingScreen = "/waitingScreen";
   static const String farmAddProductScreen = "/farmAddProductScreen";
   static const String assistantScreen = "/assistantScreen";
+
+  static const String verificationScreen = "/verificationScreen";
   static const String newsDetailsScreen = "/newsDetailsScreen";
   static const homeScreen = "/homeScreen";
   static const thankScreen = "/thank_screen";
@@ -69,6 +72,7 @@ class Navigation {
   static const bookmarkScreen = "/bookmark_screen";
   static const cardPaymentScreen = "/cardPaymentScreen";
   static const mobileMoneyScreen = "/mobileMoneyScreen";
+  static const farmerSearchScreen = "/farmerSearchScreen";
 
   static const searchScreen = "/searchScreen";
 
@@ -86,7 +90,6 @@ class Navigation {
   static const resetPassword = "/resetPassword";
   static const successAccountScreen = "/successAccountScreen";
   static const signInScreen = "/signInScreen";
-  static const verificationScreen = "/verificationScreen";
   static const oonboardingScreen = "/onboardingScreen";
 
   static const resetScreen = "/resetScreen";
@@ -108,9 +111,6 @@ class Navigation {
         return MaterialPageRoute(builder: (_) => const FarmerMainScreen());
       case registrationScreen:
         return MaterialPageRoute(builder: (_) => const RegistrationScreen());
-      case buyerRegistrationScreen:
-        return MaterialPageRoute(
-            builder: (_) => const BuyerRegistrationScreen());
       case waitingScreen:
         return MaterialPageRoute(builder: (_) => const WaitingScreen());
       case assistantScreen:
@@ -157,12 +157,10 @@ class Navigation {
         return openRoute(widget: const ReportAppreciation());
       case thankScreen:
         return openRoute(widget: const ThankScreen());
-      // case loginScreen:
-      //   return openRoute(widget: const LoginScreen());
+      case farmerSearchScreen:
+        return openRoute(widget: const FarmerSearchScreen());
       case mobileMoneyScreen:
         return openRoute(widget: const MobileMoney());
-      case welcomeScreen:
-        return openRoute(widget: const WelcomeScreen());
       case signUpScreen:
         return openRoute(widget: const SignUpScreen());
       case successAccountScreen:
@@ -250,6 +248,10 @@ class Navigation {
 
   static openSearchScreen({required BuildContext context}) {
     return Navigator.pushNamed(context, searchScreen);
+  }
+
+  static openfarmerSearchScreen({required BuildContext context}) {
+    return Navigator.pushNamed(context, farmerSearchScreen);
   }
 
   static openResetScreen({required BuildContext context}) {

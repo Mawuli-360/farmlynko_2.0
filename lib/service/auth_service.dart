@@ -15,6 +15,9 @@ final phoneNumberProvider = StateProvider<String>((ref) => '');
 final authProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 final authExceptionProvider = StateProvider<String?>((ref) => null);
 final isLoading = StateProvider<bool>((ref) => false);
+final isBuyerSigningUp = StateProvider<bool>((ref) => false);
+final isFarmerSigningUp = StateProvider<bool>((ref) => false);
+
 
 class AuthService {
   static Future<bool> authenticateUser(

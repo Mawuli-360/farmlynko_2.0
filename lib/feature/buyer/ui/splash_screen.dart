@@ -42,7 +42,7 @@ class SplashScreenState extends State<SplashScreen>
 
     Timer(const Duration(seconds: 2), () {
       setState(() {
-        _fontSize = 1.1;
+        _fontSize = 1.06;
       });
     });
 
@@ -110,7 +110,7 @@ class SplashScreenState extends State<SplashScreen>
               AnimatedContainer(
                   duration: const Duration(milliseconds: 2000),
                   curve: Curves.fastLinearToSlowEaseIn,
-                  height: height / _fontSize * 0.074.h),
+                  height: height / _fontSize),
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 1000),
                 opacity: _textOpacity,
@@ -151,30 +151,4 @@ class SplashScreenState extends State<SplashScreen>
       ),
     );
   }
-}
-
-class PageTransition extends PageRouteBuilder {
-  final String page;
-  final Widget Function(BuildContext context, String routeName) builder;
-
-  PageTransition(this.page, this.builder)
-      : super(
-          pageBuilder: (context, animation, anotherAnimation) =>
-              builder(context, page),
-          transitionDuration: const Duration(milliseconds: 2000),
-          transitionsBuilder: (context, animation, anotherAnimation, child) {
-            animation = CurvedAnimation(
-              curve: Curves.fastLinearToSlowEaseIn,
-              parent: animation,
-            );
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: SizeTransition(
-                sizeFactor: animation,
-                axisAlignment: 0,
-                child: child,
-              ),
-            );
-          },
-        );
 }

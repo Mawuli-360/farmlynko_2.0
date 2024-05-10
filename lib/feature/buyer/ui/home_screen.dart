@@ -64,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final productList = ref.watch(fetchSomeProductProvider);
-    final user = ref.watch(userDetailsProvider);
+    User? user = ref.watch(userDetailsProvider);
 
     List<Widget> newsItem = [
       _buildCarouselItem(
@@ -121,53 +121,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 20.h,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: 12.h,
-                          width: 12.h,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.h)),
-                              color: Colors.white,
-                              image: const DecorationImage(
-                                  image: AppImages.avatar),
-                              boxShadow: [
-                                BoxShadow(
-                                    color:
-                                        const Color.fromARGB(73, 255, 153, 0),
-                                    spreadRadius: 0.3.h,
-                                    offset: const Offset(2, 8),
-                                    blurRadius: 2.h)
-                              ]),
-                        ),
-                      ),
-                    ),
+                    Gap(10.h),
                     Padding(
-                        padding: EdgeInsets.only(left: 4.h, top: 4.h),
-                        child: user.when(
-                            data: (data) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    data.name,
-                                    style: TextStyle(fontSize: 15.sp),
-                                  ),
-                                  SizedBox(
-                                    height: 0.5.h,
-                                  ),
-                                  Text(
-                                    data.email,
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
-                                ],
-                              );
-                            },
-                            error: (error, st) => Text(error.toString()),
-                            loading: () => const CircularProgressIndicator())),
+                      padding: EdgeInsets.only(left: 4.h, top: 4.h),
+                      child: user != null
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name,
+                                  style: TextStyle(fontSize: 15.sp),
+                                ),
+                                SizedBox(
+                                  height: 0.5.h,
+                                ),
+                                Text(
+                                  user.email,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            )
+                          : const Text("User"),
+                    ),
                     Expanded(
                       child: ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),

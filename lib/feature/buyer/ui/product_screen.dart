@@ -3,7 +3,9 @@ import 'package:farmlynko/feature/buyer/model/product_model.dart';
 import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:farmlynko/shared/resource/social_launch.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:sizer/sizer.dart';
@@ -112,6 +114,38 @@ class _ProductPageState extends ConsumerState<ProductPage> {
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey),
+                    ),
+                    Gap(4.h),
+                    SizedBox(
+                      height: 10.h,
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(5.h),
+                            child: CachedNetworkImage(
+                              height: 8.h,
+                              width: 8.h,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Image.asset("assets/images/avatar.png"),
+                              imageUrl: widget.product.profilePic,
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            ),
+                          ),
+                          Gap(1.h),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Name of owner: ${widget.product.productOwner}",
+                                style: TextStyle(fontSize: 12.sp),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 4.h,

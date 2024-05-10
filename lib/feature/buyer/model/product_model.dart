@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,8 @@ class ProductModel {
   final String name;
   final String price;
   final String productId;
+  final String productOwner;
+  final String profilePic;
   final String userId;
   final String userPhoneNumber;
   ProductModel({
@@ -16,6 +19,8 @@ class ProductModel {
     required this.name,
     required this.price,
     required this.productId,
+    required this.productOwner,
+    required this.profilePic,
     required this.userId,
     required this.userPhoneNumber,
   });
@@ -26,6 +31,8 @@ class ProductModel {
     String? name,
     String? price,
     String? productId,
+    String? productOwner,
+    String? profilePic,
     String? userId,
     String? userPhoneNumber,
   }) {
@@ -35,6 +42,8 @@ class ProductModel {
       name: name ?? this.name,
       price: price ?? this.price,
       productId: productId ?? this.productId,
+      productOwner: productOwner ?? this.productOwner,
+      profilePic: profilePic ?? this.profilePic,
       userId: userId ?? this.userId,
       userPhoneNumber: userPhoneNumber ?? this.userPhoneNumber,
     );
@@ -47,6 +56,8 @@ class ProductModel {
       'name': name,
       'price': price,
       'productId': productId,
+      'productOwner': productOwner,
+      'profilePic': profilePic,
       'userId': userId,
       'userPhoneNumber': userPhoneNumber,
     };
@@ -61,6 +72,8 @@ class ProductModel {
       name: map['name'] as String,
       price: map['price'] as String,
       productId: map['productId'] as String,
+      productOwner: map['productOwner'] as String,
+      profilePic: map['profilePic'] as String,
       userId: map['userId'] as String,
       userPhoneNumber: map['userPhoneNumber'] as String,
     );
@@ -70,7 +83,7 @@ class ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(description: $description, imageUrl: $imageUrl, name: $name, price: $price, productId: $productId, userId: $userId, userPhoneNumber: $userPhoneNumber)';
+    return 'ProductModel(description: $description, imageUrl: $imageUrl, name: $name, price: $price, productId: $productId, productOwner: $productOwner, profilePic: $profilePic, userId: $userId, userPhoneNumber: $userPhoneNumber)';
   }
 
   @override
@@ -82,6 +95,8 @@ class ProductModel {
         other.name == name &&
         other.price == price &&
         other.productId == productId &&
+        other.productOwner == productOwner &&
+        other.profilePic == profilePic &&
         other.userId == userId &&
         other.userPhoneNumber == userPhoneNumber;
   }
@@ -93,6 +108,8 @@ class ProductModel {
         name.hashCode ^
         price.hashCode ^
         productId.hashCode ^
+        productOwner.hashCode ^
+        profilePic.hashCode ^
         userId.hashCode ^
         userPhoneNumber.hashCode;
   }

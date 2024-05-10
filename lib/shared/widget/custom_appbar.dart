@@ -36,16 +36,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      actions: [
-        Container(
-          width: 4.3.h,
-          margin: EdgeInsets.symmetric(horizontal: 1.5.h, vertical: 1.h),
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              image: DecorationImage(image: AppImages.avatar),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-        )
-      ],
       centerTitle: true,
       title: Text(
         title,

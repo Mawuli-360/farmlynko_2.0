@@ -4,7 +4,6 @@ import 'package:farmlynko/shared/widget/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'package:tasty_toast/tasty_toast.dart';
 
@@ -55,8 +54,8 @@ class _RateScreenState extends ConsumerState<RateScreen> {
                           },
                           child: Container(
                             margin: EdgeInsets.all(1.h),
-                            height: 4.h,
-                            width: 4.h,
+                            height: 5.h,
+                            width: 5.h,
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.green),
                                 color: Colors.white,
@@ -67,7 +66,7 @@ class _RateScreenState extends ConsumerState<RateScreen> {
                               child: Icon(
                                 Icons.arrow_back_ios,
                                 color: Colors.black,
-                                size: 2.h,
+                                size: 2.5.h,
                               ),
                             ),
                           ),
@@ -92,8 +91,8 @@ class _RateScreenState extends ConsumerState<RateScreen> {
                                   ),
                                   child: Center(
                                     child: Container(
-                                      height: 10.h,
-                                      width: 10.h,
+                                      height: 14.h,
+                                      width: 14.h,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                       ),

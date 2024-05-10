@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farmlynko/feature/buyer/provider/cart_provider.dart';
 import 'package:farmlynko/feature/buyer/provider/products_provider.dart';
-import 'package:farmlynko/feature/farmer/farmer_main_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_shop/farmer_product_detail.dart';
 import 'package:farmlynko/feature/farmer/model/farmer_product_model.dart';
 import 'package:farmlynko/routes/navigation.dart';
@@ -48,8 +47,11 @@ class _FarmerShopScreenState extends ConsumerState<FarmerShopScreen> {
         backgroundColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (_) => const FarmerMainScreen()));
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (_) => const ServiceLandingScreen()));
+            Navigator.pop(context);
           },
           child: Container(
             margin: EdgeInsets.all(1.h),
@@ -110,7 +112,7 @@ class _FarmerShopScreenState extends ConsumerState<FarmerShopScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                Navigation.openSearchScreen(context: context);
+                Navigation.openfarmerSearchScreen(context: context);
               },
               child: Container(
                 height: 5.h,
@@ -230,7 +232,6 @@ class _FarmerShopScreenState extends ConsumerState<FarmerShopScreen> {
             Container(
               height: 13.h,
               width: double.infinity,
-              // color: Colors.yellow,
               decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 181, 255, 183),
                   borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -246,7 +247,7 @@ class _FarmerShopScreenState extends ConsumerState<FarmerShopScreen> {
             ),
             Container(
               padding: EdgeInsets.only(left: 0.6.h, top: 0.5.h),
-              height: 9.h,
+              height: 11.h,
               width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -36,6 +36,7 @@ class AppImages {
   static const AssetImage labors = AssetImage("assets/images/farm_labors.jpg");
   static const AssetImage backgroundImg = AssetImage("assets/images/back1.jpg");
   static const AssetImage chatBackground = AssetImage("assets/images/chB.jpg");
+  static const AssetImage agroShop = AssetImage("assets/images/agroshop.jpg");
 
   //SVG ICON FILES
   static final comments = SvgPicture.asset("assets/icons/comments.svg");

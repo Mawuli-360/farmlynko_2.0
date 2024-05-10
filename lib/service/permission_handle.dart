@@ -1,10 +1,13 @@
+import 'package:farmlynko/provider/place_name_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionHandle {
   PermissionHandle._();
 
-  static Future<void> requestPermissions(BuildContext context) async {
+  static Future<void> requestPermissions(
+      BuildContext context, WidgetRef ref) async {
     // Request location and microphone permissions
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
@@ -16,6 +19,7 @@ class PermissionHandle {
     // Check if permissions are granted
     if (statuses[Permission.location] == PermissionStatus.granted &&
         statuses[Permission.microphone] == PermissionStatus.granted) {
+      ref.watch(placeNameProvider);
     } else {
       // Permissions denied or never requested
       showPermissionDeniedDialog(context);

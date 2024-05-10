@@ -294,7 +294,7 @@ class _FarmEditScreenState extends ConsumerState<FarmEditScreen> {
                       padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                       child: TextFormField(
                         controller: descriptionController,
-                        maxLines: 5,
+                        maxLines: 4,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Description',

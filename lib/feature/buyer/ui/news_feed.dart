@@ -101,7 +101,7 @@ class NewsFeed extends ConsumerWidget {
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         child: Container(
           margin: EdgeInsets.only(bottom: 4.h, left: 2.h, right: 2.h),
-          height: 18.h,
+          height: 22.h,
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: const Color.fromARGB(75, 158, 158, 158)),
@@ -172,9 +172,16 @@ class NewsFeed extends ConsumerWidget {
                           ),
                           IconButton(
                             onPressed: onPressed,
+                            padding: EdgeInsets.zero,
                             icon: isBookmarked
-                                ? const Icon(Icons.bookmark)
-                                : const Icon(Icons.bookmark_outline_sharp),
+                                ? Icon(
+                                    Icons.bookmark,
+                                    size: 4.h,
+                                  )
+                                : Icon(
+                                    Icons.bookmark_outline_sharp,
+                                    size: 4.h,
+                                  ),
                             color: isBookmarked ? Colors.green : null,
                           )
                         ],

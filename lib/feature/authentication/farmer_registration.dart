@@ -1,19 +1,18 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farmlynko/feature/authentication/email_verification_screen.dart';
 import 'package:farmlynko/feature/authentication/provider/authentication_provider.dart';
 import 'package:farmlynko/feature/buyer/ui/logins_screen/login.dart';
-import 'package:farmlynko/routes/navigation.dart';
 import 'package:farmlynko/service/auth_service.dart';
-import 'package:farmlynko/shared/resource/app_images.dart';
+import 'package:farmlynko/shared/resource/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 
 class FarmerRegisterScreen extends ConsumerStatefulWidget {
@@ -30,6 +29,37 @@ class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
+  File? _imageFile;
+
+  Future<void> _pickImage(BuildContext context) async {
+    final imageSource = await showDialog<ImageSource>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Image Source'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, ImageSource.gallery),
+            child: const Text('Gallery'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, ImageSource.camera),
+            child: const Text('Camera'),
+          ),
+        ],
+      ),
+    );
+
+    if (imageSource != null) {
+      final imagePicker = ImagePicker();
+      final file = await imagePicker.pickImage(source: imageSource);
+      if (file != null) {
+        setState(() {
+          _imageFile = File(file.path);
+        });
+      }
+    }
+  }
+
   void signUpFarmer() async {
     final firstName = fullNameController.text.trim();
     final email = emailController.text.trim();
@@ -41,7 +71,8 @@ class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
     if (firstName.isEmpty ||
         email.isEmpty ||
         phoneNumber.isEmpty ||
-        password.isEmpty) {
+        password.isEmpty ||
+        _imageFile == null) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -62,7 +93,15 @@ class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
       return;
     }
 
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('farmers_profile');
+    Reference referenceImageToUpload = referenceDirImages.child(uniqueFileName);
+
     try {
+      await referenceImageToUpload.putFile(_imageFile!);
+      String imageUrl = await referenceImageToUpload.getDownloadURL();
+
       final UserCredential userCredential =
           await auth.createUserWithEmailAndPassword(
         email: email,
@@ -77,36 +116,32 @@ class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
         'email': email,
         'phoneNumber': phoneNumber,
         'role': "Farmer",
-        'status': "pending",
+        'imageUrl': imageUrl,
       };
 
       await firestore.collection('users').doc(user.uid).set(userRecord);
 
-      Fluttertoast.showToast(msg: "user created successfully");
+      await user.sendEmailVerification();
 
-      if (userCredential.user != null) {
-        String uid = userCredential.user!.uid;
-        DocumentSnapshot userSnapshot =
-            await firestore.collection('users').doc(uid).get();
+      final currentUser = auth.currentUser;
 
-        if (userSnapshot.exists) {
-          final userData = userSnapshot.data() as Map<String, dynamic>;
+      Fluttertoast.showToast(
+          msg: "user created successfully, please verify your email.");
 
-          if (userData['status'] == 'pending') {
-            Navigation.navigateTo(Navigation.waitingScreen);
-          }
-
-          if (userData['status'] == 'approved') {
-            Navigation.navigateTo(Navigation.farmerScreen);
-          }
-        }
-      }
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (_) => EmailVerificationScreen(
+                    user: currentUser!,
+                  )));
+      ref.watch(isFarmerSigningUp.notifier).state = false;
 
       fullNameController.clear();
       emailController.clear();
       passwordController.clear();
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
+      ref.watch(isFarmerSigningUp.notifier).state = false;
     }
   }
 
@@ -188,54 +223,126 @@ class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
                           passwordController.text = value;
                         },
                         controller: passwordController),
+                    Text(
+                      "Upload your profile picture",
+                      style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+                    ),
+                    GestureDetector(
+                        onTap: () => _pickImage(context),
+                        child: _imageFile == null
+                            ? Container(
+                                width: double.infinity,
+                                height: 157,
+                                decoration: const BoxDecoration(
+                                  color: Color.fromARGB(255, 61, 170, 152),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    height: 12.h,
+                                    width: 12.h,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.camera,
+                                        size: 5.h,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Stack(
+                                children: [
+                                  SizedBox(
+                                    width: 64.w,
+                                    height: 24.h,
+                                  ),
+                                  Positioned(
+                                    top: 1.h,
+                                    left: 1.h,
+                                    child: Container(
+                                      width: 60.w,
+                                      height: 22.h,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: FileImage(_imageFile!),
+                                            fit: BoxFit.fill),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => _pickImage(context),
+                                    child: CircleAvatar(
+                                      radius: 2.5.h,
+                                      backgroundColor: AppColors.primaryColor,
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.edit,
+                                          color: AppColors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )),
                     SizedBox(
                       width: double.infinity,
                       height: 21.h,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextButton(
-                              onPressed: () {
-                                Navigation.openResetScreen(context: context);
-                              },
-                              child: const Text(
-                                "Forgot password?",
-                                style: TextStyle(color: Colors.green),
-                              )),
                           SizedBox(
-                            height: 2.h,
+                            height: 4.h,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              signUpFarmer();
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                  bottom: 1.h, left: 4.h, right: 4.h),
-                              height: 6.h,
-                              decoration: ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                        color: const Color.fromARGB(
-                                            57, 102, 101, 99),
-                                        spreadRadius: 0.1.h,
-                                        blurRadius: 3.h,
-                                        offset: const Offset(10, 10))
-                                  ],
-                                  color: Colors.green,
-                                  shape: const StadiumBorder()),
-                              child: Center(
-                                  child: Text(
-                                "SIGN UP",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12.sp),
-                              )),
-                            ),
-                          ),
+                          ref.watch(isFarmerSigningUp)
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : GestureDetector(
+                                  onTap: () {
+                                    ref
+                                        .watch(isFarmerSigningUp.notifier)
+                                        .state = true;
+
+                                    signUpFarmer();
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                        bottom: 1.h, left: 4.h, right: 4.h),
+                                    height: 6.h,
+                                    decoration: ShapeDecoration(
+                                        shadows: [
+                                          BoxShadow(
+                                              color: const Color.fromARGB(
+                                                  57, 102, 101, 99),
+                                              spreadRadius: 0.1.h,
+                                              blurRadius: 3.h,
+                                              offset: const Offset(10, 10))
+                                        ],
+                                        color: Colors.green,
+                                        shape: const StadiumBorder()),
+                                    child: Center(
+                                        child: Text(
+                                      "SIGN UP",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.sp),
+                                    )),
+                                  ),
+                                ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text("Already have an account?"),
+                              Text(
+                                "Already have an account?",
+                                style: TextStyle(fontSize: 13.sp),
+                              ),
                               TextButton(
                                   onPressed: () {
                                     Navigator.pushReplacement(
@@ -245,9 +352,10 @@ class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
                                               const LoginScreen()),
                                     );
                                   },
-                                  child: const Text(
+                                  child: Text(
                                     "Login",
-                                    style: TextStyle(color: Colors.green),
+                                    style: TextStyle(
+                                        color: Colors.green, fontSize: 12.sp),
                                   ))
                             ],
                           ),
@@ -274,7 +382,7 @@ class _FarmerRegisterScreenState extends ConsumerState<FarmerRegisterScreen> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 2.h),
-      height: 10.h,
+      height: 12.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

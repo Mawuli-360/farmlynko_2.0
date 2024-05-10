@@ -19,10 +19,7 @@ class NewsFeedDetailScreen extends StatelessWidget {
           Container(),
           SizedBox(
             width: double.infinity,
-            height: 25.h,
-            // decoration: BoxDecoration(
-            //     image: DecorationImage(
-            //         image: AppImages.carrotfarming, fit: BoxFit.fill)),
+            height: 28.h,
             child: CachedNetworkImage(
               imageUrl: news.image,
               fit: BoxFit.fill,
@@ -82,8 +79,8 @@ class NewsFeedDetailScreen extends StatelessWidget {
               Navigator.pop(context);
             },
             child: Container(
-              height: 4.h,
-              width: 4.h,
+              height: 5.h,
+              width: 5.h,
               margin: EdgeInsets.all(1.h),
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),

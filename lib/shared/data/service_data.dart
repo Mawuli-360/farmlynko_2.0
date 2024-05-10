@@ -41,7 +41,7 @@ class ServiceScreenData {
       ),
       ServiceData(
         title: 'Shop',
-        image: AppImages.plantDisease,
+        image: AppImages.agroShop,
         onTap: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (_) => const FarmerShopScreen()));

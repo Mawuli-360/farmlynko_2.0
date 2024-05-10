@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '177096666747',
     projectId: 'farmlynko-674c5',
     storageBucket: 'farmlynko-674c5.appspot.com',
+    iosClientId: '177096666747-fop81rmlg4gtd3dlpqmjiktoar1phq4k.apps.googleusercontent.com',
     iosBundleId: 'com.example.farmlynko',
   );
+
 }
