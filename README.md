@@ -31,7 +31,8 @@ To test Farmlynco on your Android device, download the APK file attached to this
 
 ## Watch Our Video
 Check out our video to learn more about Farmlynco's impact and how it's revolutionizing African agriculture with AI:
-[![Watch the video](https://img.youtube.com/vi/_1Nxs3p7xfw/0.jpg)](https://youtu.be/_1Nxs3p7xfw)
+[![Watch the video](https://img.youtube.com/vi/jTdjS7zAq14/0.jpg)](https://youtu.be/jTdjS7zAq14)
+
 
 
 
