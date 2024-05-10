@@ -28,6 +28,32 @@ To test Farmlynco on your Android device, download the APK file attached to this
 
 [Download APK](https://drive.google.com/file/d/1ffwuz-NJZGnWXrtoCrZkumANj1kACyHj/view?usp=sharing)
 
+To run this Flutter app on your local machine, follow these steps:
+
+### Prerequisites
+
+- [Flutter](https://flutter.dev/docs/get-started/install) installed on your machine
+- A compatible IDE or code editor (e.g., [Android Studio](https://developer.android.com/studio) or [Visual Studio Code](https://code.visualstudio.com/))
+- An emulator or a physical device connected to your machine for running the app
+
+### getting repo to local machine
+
+1. Clone the repository to your local machine: https://github.com/Mawuli-360/farmlynko_2.0.git
+2. Navigate to the project directory: cd farmlynko_2.0
+3. Install the required dependencies: flutter pub get
+
+### Running the App
+
+To run the app on your connected device or emulator, use the following command: flutter run
+
+This command will build and install the app on your connected device or emulator.
+
+Alternatively, you can open the project in your IDE or code editor and run the app from there.
+
+### Building the App
+
+To build the app for release, use the following commands: flutter build apk --split-per-abi
+
 
 ## Watch Our Video
 Check out our video to learn more about Farmlynco's impact and how it's revolutionizing African agriculture with AI:
