@@ -29,6 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
+      // Show a modal progress indicator
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -40,6 +41,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
         },
       );
+
       // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -47,32 +49,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
 
+      // If the user cancels the Google Sign-In flow
+      if (googleAuth == null) {
+        // Close the modal progress indicator
+        Navigator.of(context).pop();
+        showToast(context, 'No account found. Please try again.');
+        return;
+      }
+
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       // Once signed in, return the UserCredential
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
-
-      // Check if the user is a Buyer
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
-      final User? user = userCredential.user;
+      final user = userCredential.user;
+
       if (user != null) {
+        // Check if the user exists in the "users" collection
         DocumentSnapshot userSnapshot =
             await firestore.collection('users').doc(user.uid).get();
-        if (userSnapshot.exists) {
-          final userData = userSnapshot.data() as Map<String, dynamic>;
-          String role = userData['role'];
-          if (role == 'Buyer') {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
-          }
+
+        // If the user doesn't exist, create a new document for them
+        if (!userSnapshot.exists) {
+          // Set the default role for new users (e.g., "Buyer")
+          String role = "Buyer";
+
+          // Create a new document in the "users" collection
+          await firestore.collection('users').doc(user.uid).set({
+            'fullName': user.displayName,
+            'email': user.email,
+            'role': role,
+            // Add any other user data you need
+          });
+        }
+
+        if (userCredential.user != null) {
+          // Close the modal progress indicator
+          Navigator.of(context).pop();
+
+          // Navigate to the home screen
+          Navigation.navigateTo(Navigation.homeScreen);
         }
       }
     } catch (e) {
+      // Close the modal progress indicator
+      Navigator.of(context).pop();
       showToast(context, e.toString());
     }
   }

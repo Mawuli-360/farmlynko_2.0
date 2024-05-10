@@ -50,10 +50,18 @@ class _BuyerRegisterScreenState extends ConsumerState<BuyerRegisterScreen> {
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
 
+      // If the user cancels the Google Sign-In flow
+      if (googleAuth == null) {
+        // Close the modal progress indicator
+        Navigator.of(context).pop();
+        showToast(context, 'No account found. Please try again.');
+        return;
+      }
+
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       // Once signed in, return the UserCredential
@@ -92,7 +100,6 @@ class _BuyerRegisterScreenState extends ConsumerState<BuyerRegisterScreen> {
     } catch (e) {
       // Close the modal progress indicator
       Navigator.of(context).pop();
-
       showToast(context, e.toString());
     }
   }
