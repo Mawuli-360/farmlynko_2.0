@@ -28,6 +28,30 @@ To test Farmlynco on your Android device, download the APK file attached to this
 
 [Download APK](https://drive.google.com/file/d/1Lz_prH7KX4H3eYbxhOweMhcuU0c_D8T-/view?usp=sharing)
 
+
+## Authentication Flow
+
+### 1. Signing Up as a Buyer
+- **Option 1: Sign up with Google Account**
+  - Click on the "Sign Up with Google" button.
+  - Follow the prompts to sign in with your Google account.
+  - After successful authentication, you can log in using your Google account.
+
+### 2. Signing Up as a Farmer
+- **Step 1: Register with Email**
+  - Click on the "Sign Up" button and select the "Farmer" option.
+  - Fill in your details, including your email address.
+  - Submit the registration form.
+  
+- **Step 2: Verify Your Email**
+  - Check your email for a verification link.
+  - Click on the verification link to confirm your email address.
+  
+- **Step 3: Access Farmers Section**
+  - After email verification, return to the application.
+  - Click on the "Continue" button and it will lead you to the login screen to help you sign in now.
+
+
 ### NB: [Server link](https://github.com/Mawuli-360/newton_hackthon.git) leads to the server github
 
 To run this Flutter app on your local machine, follow these steps:
