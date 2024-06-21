@@ -1,4 +1,3 @@
-import 'package:farmlynko/shared/resource/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sizer/sizer.dart';

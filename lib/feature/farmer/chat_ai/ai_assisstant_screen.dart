@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:farmlynko/feature/farmer/chat_ai/component/message.dart';

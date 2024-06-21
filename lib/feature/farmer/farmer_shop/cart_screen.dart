@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farmlynko/feature/buyer/provider/cart_provider.dart';
-import 'package:farmlynko/feature/buyer/ui/home_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_shop/farmer_shop_screen.dart';
-import 'package:farmlynko/feature/farmer/home_screen/presentation/farmer_home_screen.dart';
 import 'package:farmlynko/routes/navigation.dart';
 import 'package:farmlynko/shared/widget/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';

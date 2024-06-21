@@ -10,7 +10,6 @@ import 'package:farmlynko/shared/widget/custom_app_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gap/gap.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:sizer/sizer.dart';
 import 'package:tasty_toast/tasty_toast.dart';

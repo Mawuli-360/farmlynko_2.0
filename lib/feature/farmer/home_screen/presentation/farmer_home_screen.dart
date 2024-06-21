@@ -1,5 +1,4 @@
 import 'package:farmlynko/feature/buyer/provider/user_provider.dart';
-import 'package:farmlynko/feature/farmer/farmer_main_screen.dart';
 import 'package:farmlynko/feature/farmer/home_screen/presentation/widget/news_section.dart';
 import 'package:farmlynko/feature/farmer/home_screen/presentation/widget/tip_section.dart';
 import 'package:farmlynko/feature/farmer/home_screen/presentation/widget/trending_section.dart';

@@ -1,6 +1,5 @@
 import 'package:farmlynko/feature/farmer/farmer_menu_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_tab_screens.dart';
-import 'package:farmlynko/feature/farmer/model/weather_response_model.dart';
 import 'package:farmlynko/main.dart';
 import 'package:farmlynko/provider/place_name_provider.dart';
 import 'package:farmlynko/service/permission_handle.dart';
@@ -9,11 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:sizer/sizer.dart';
-import 'package:tasty_toast/tasty_toast.dart';
-import 'package:http/http.dart' as http;
 
 final placeName = StateProvider<String>((ref) => '');
 final advice = StateProvider<String>((ref) => '');

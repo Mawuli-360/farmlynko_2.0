@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:farmlynko/feature/buyer/model/product_model.dart';
 import 'package:farmlynko/feature/buyer/provider/products_provider.dart';
-import 'package:farmlynko/feature/buyer/ui/product_screen.dart';
 import 'package:farmlynko/feature/farmer/farmer_shop/farmer_product_detail.dart';
 import 'package:farmlynko/feature/farmer/model/farmer_product_model.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,3 @@
-import 'package:farmlynko/feature/authentication/buyer_registration.dart';
-import 'package:farmlynko/feature/authentication/email_verification_screen.dart';
 import 'package:farmlynko/feature/authentication/registration_screen.dart';
 import 'package:farmlynko/feature/authentication/waiting_screen.dart';
 import 'package:farmlynko/feature/buyer/ui/bookmark_screen.dart';
